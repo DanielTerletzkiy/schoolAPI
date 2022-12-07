@@ -9,7 +9,7 @@ import {User} from '.prisma/client';
 
 // Paths
 const paths = {
-  basePath: '/users',
+  basePath: '/user',
   get: '/all',
   add: '/add',
   update: '/update',

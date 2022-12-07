@@ -1,57 +1,48 @@
-import userRepo from '@src/repos/user-repo';
-import jwtUtil from '@src/util/jwt-util';
-import pwdUtil from '@src/util/pwd-util';
-import HttpStatusCodes from '@src/declarations/major/HttpStatusCodes';
-import { RouteError } from '@src/declarations/classes';
-import { tick } from '@src/declarations/functions';
-
+import userRepo from "@src/repos/user-repo";
+import jwtUtil from "@src/util/jwt-util";
+import pwdUtil from "@src/util/pwd-util";
+import HttpStatusCodes from "@src/declarations/major/HttpStatusCodes";
+import { RouteError } from "@src/declarations/classes";
+import { tick } from "@src/declarations/functions";
+import { AccessToken } from "@src/routes/shared/types";
 
 // **** Variables **** //
 
 // Errors
 export const errors = {
-  unauth: 'Unauthorized',
+  unauth: "Unauthorized",
   emailNotFound: (email: string) => `User with email "${email}" not found`,
 } as const;
-
 
 // **** Functions **** //
 
 /**
  * Login a user.
  */
-async function getJwt(email: string, password: string): Promise<string> {
+export async function getJwt(email: string, password: string): Promise<string> {
   // Fetch user
   const user = await userRepo.getOneByEmail(email);
   if (!user) {
     throw new RouteError(
       HttpStatusCodes.UNAUTHORIZED,
-      errors.emailNotFound(email),
+      errors.emailNotFound(email)
     );
   }
   // Check password
-  console.log(user, await pwdUtil.getHash(password))
   const pwdPassed = await pwdUtil.compare(password, user.hash);
   if (!pwdPassed) {
     // If password failed, wait 500ms this will increase security
     await tick(500);
-    throw new RouteError(
-      HttpStatusCodes.UNAUTHORIZED,
-      errors.unauth,
-    );
+    throw new RouteError(HttpStatusCodes.UNAUTHORIZED, errors.unauth);
   }
-  // Setup Admin Cookie
   return jwtUtil.sign({
     id: user.id,
-    email: user.name,
+    email: user.email,
     name: user.name,
-    role: user.roleId,
+    roleId: user.roleId,
   });
 }
 
-
-// **** Export default **** //
-
-export default {
-  getJwt,
-} as const;
+export async function parseJwt(token: string): Promise<AccessToken> {
+  return <AccessToken> await jwtUtil.decode(token);
+}

@@ -10,7 +10,7 @@ displayUsers();
  */
 function displayUsers() {
   Http
-    .get('/api/users/all')
+    .get('/api/user/all')
     .then(resp => resp.json())
     .then((resp) => {
       var allUsers = resp.users;
@@ -98,7 +98,7 @@ function addUser() {
   };
   // Call api
   Http
-    .post('/api/users/add', data)
+    .post('/api/user/add', data)
     .then(() => displayUsers());
 }
 
@@ -140,7 +140,7 @@ function submitEdit(ele) {
     },
   };
 	Http
-    .put('/api/users/update', data)
+    .put('/api/user/update', data)
     .then(() => displayUsers());
 }
 
@@ -150,7 +150,7 @@ function submitEdit(ele) {
 function deleteUser(ele) {
   var id = ele.getAttribute('data-user-id');
 	Http
-    .delete('/api/users/delete/' + id)
+    .delete('/api/user/delete/' + id)
     .then(() => displayUsers());
 }
 

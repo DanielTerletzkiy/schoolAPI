@@ -1,6 +1,6 @@
 import HttpStatusCodes from '@src/declarations/major/HttpStatusCodes';
 
-import authService from '@src/services/auth-service';
+import { getJwt } from "@src/services/auth-service";
 import EnvVars from '@src/declarations/major/EnvVars';
 import { IReq, IRes } from './shared/types';
 
@@ -31,11 +31,11 @@ interface ILoginReq {
 async function login(req: IReq<ILoginReq>, res: IRes) {
   const { email, password } = req.body;
   // Add jwt to cookie
-  const jwt = await authService.getJwt(email, password);
+  const jwt = await getJwt(email, password);
   const { key, options } = EnvVars.cookieProps;
   res.cookie(key, jwt, options);
   // Return
-  return res.status(HttpStatusCodes.OK).end();
+  return res.send(jwt).status(HttpStatusCodes.OK).end();
 }
 
 /**

@@ -2,9 +2,10 @@ import { Router } from 'express';
 import jetValidator from 'jet-validator';
 
 import adminMw from './shared/adminMw';
-import {User} from '.prisma/client';
+
 import authRoutes from './auth-routes';
 import userRoutes from './user-routes';
+import AuthCheck from "@src/routes/middleware/AuthCheck";
 
 
 // **** Init **** //
@@ -34,6 +35,7 @@ apiRouter.use(authRoutes.paths.basePath, authRouter);
 // **** Setup user routes **** //
 
 const userRouter = Router();
+userRouter.use(AuthCheck);
 
 // Get all users
 userRouter.get(userRoutes.paths.get, userRoutes.getAll);
@@ -57,7 +59,7 @@ userRouter.delete(
 );
 
 // Add userRouter
-apiRouter.use(userRoutes.paths.basePath, adminMw, userRouter);
+apiRouter.use(userRoutes.paths.basePath, userRouter);
 
 
 // **** Export default **** //

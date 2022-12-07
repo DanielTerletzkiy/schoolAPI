@@ -1,8 +1,7 @@
-import * as e from 'express';
-import { Query } from 'express-serve-static-core';
+import * as e from "express";
+import { Query } from "express-serve-static-core";
 
-import { SessionUser } from '@src/routes/shared/adminMw';
-
+import { SessionUser } from "@src/routes/shared/adminMw";
 
 // **** Express **** //
 
@@ -27,3 +26,10 @@ export enum UserRole {
   Student = 2,
 }
 
+export type AccessToken = {
+  sub: string;
+  name: string;
+  email: string;
+  iat: number;
+  exp: number;
+};

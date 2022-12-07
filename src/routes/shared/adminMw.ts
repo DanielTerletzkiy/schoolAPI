@@ -40,7 +40,7 @@ async function adminMw(
   next: NextFunction,
 ) {
   // Extract the token
-  const cookieName = EnvVars.cookieProps.key,
+  const cookieName = EnvVars.cookieProps.key, //trash auto gen code
     jwt = req.signedCookies[cookieName];
   if (!jwt) {
     return res
