@@ -2,12 +2,17 @@ import { NextFunction, Request, Response } from "express";
 import HttpStatusCodes from "@src/declarations/major/HttpStatusCodes";
 import { RouteError } from "@src/declarations/classes";
 import { parseJwt } from "@src/services/auth-service";
+import EnvVars from "@src/declarations/major/EnvVars";
 
 const NO_AUTH = "no authorization provided";
 const INVALID_AUTH = "invalid authorization type";
 const EXPIRED_AUTH_TOKEN = "token has expired";
 
-export default async function (req: Request, res: Response, next: NextFunction) {
+export default async function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   const authorization = req.get("Authorization");
   if (!authorization) {
     throw new RouteError(HttpStatusCodes.UNAUTHORIZED, NO_AUTH);
@@ -35,4 +40,17 @@ export default async function (req: Request, res: Response, next: NextFunction) 
     }
   }
   return next();
+}
+
+export function AuthCookieCheck(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const { key } = EnvVars.cookieProps;
+  const token = (req.cookies as { [key]: string })[key];
+  if (token && !req.headers.authorization) {
+    req.headers.authorization = `Bearer ${token}`;
+  }
+  next();
 }

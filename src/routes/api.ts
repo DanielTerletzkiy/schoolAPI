@@ -5,7 +5,7 @@ import adminMw from './shared/adminMw';
 
 import authRoutes from './auth-routes';
 import userRoutes from './user-routes';
-import AuthCheck from "@src/routes/middleware/AuthCheck";
+import AuthCheck, {AuthCookieCheck} from "@src/routes/middleware/AuthCheck";
 
 
 // **** Init **** //
@@ -13,6 +13,7 @@ import AuthCheck from "@src/routes/middleware/AuthCheck";
 const apiRouter = Router(),
   validate = jetValidator();
 
+apiRouter.use(AuthCookieCheck);
 
 // **** Setup auth routes **** //
 
