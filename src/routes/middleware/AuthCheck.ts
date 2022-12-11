@@ -1,11 +1,14 @@
 import { NextFunction, Request, Response } from "express";
 import HttpStatusCodes from "@src/declarations/major/HttpStatusCodes";
 import { RouteError } from "@src/declarations/classes";
-import { parseJwt } from "@src/services/auth-service";
+import {
+  getSplitAuthorizationHeader,
+  parseJwt,
+} from "@src/services/auth-service";
 import EnvVars from "@src/declarations/major/EnvVars";
 
 const NO_AUTH = "no authorization provided";
-const INVALID_AUTH = "invalid authorization type";
+const INVALID_AUTH_TYPE = "invalid authorization type";
 const EXPIRED_AUTH_TOKEN = "token has expired";
 
 export default async function (
@@ -17,13 +20,10 @@ export default async function (
   if (!authorization) {
     throw new RouteError(HttpStatusCodes.UNAUTHORIZED, NO_AUTH);
   }
-  const authRegex = authorization.match(new RegExp("(.*)\\s(.*)"));
-  if (!authRegex || !authRegex.length) {
-    throw new RouteError(HttpStatusCodes.UNAUTHORIZED, INVALID_AUTH);
-  }
-  const authorizationType = authRegex[1].trim();
-  const authorizationCode = authRegex[2].trim();
-  switch (authorizationType.toLowerCase()) {
+  const { authorizationType, authorizationCode } =
+    getSplitAuthorizationHeader(authorization);
+
+  switch (authorizationType) {
     case "key": {
       break;
     }
@@ -33,10 +33,11 @@ export default async function (
       if (expiration.getTime() < new Date().getTime()) {
         throw new RouteError(HttpStatusCodes.UNAUTHORIZED, EXPIRED_AUTH_TOKEN);
       }
+      res.locals.currentUser = parsedJWT;
       break;
     }
     default: {
-      throw new RouteError(HttpStatusCodes.UNAUTHORIZED, INVALID_AUTH);
+      throw new RouteError(HttpStatusCodes.UNAUTHORIZED, INVALID_AUTH_TYPE);
     }
   }
   return next();

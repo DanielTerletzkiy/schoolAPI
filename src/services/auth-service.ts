@@ -1,4 +1,4 @@
-import userRepo from "@src/repos/user-repo";
+import * as userRepo from "@src/modules/user/Repository";
 import jwtUtil from "@src/util/jwt-util";
 import pwdUtil from "@src/util/pwd-util";
 import HttpStatusCodes from "@src/declarations/major/HttpStatusCodes";
@@ -45,4 +45,15 @@ export async function getJwt(email: string, password: string): Promise<string> {
 
 export async function parseJwt(token: string): Promise<AccessToken> {
   return <AccessToken> await jwtUtil.decode(token);
+}
+
+export function getSplitAuthorizationHeader(authorization: string){
+  const authRegex = authorization.match(new RegExp("(.*)\\s(.*)"));
+  if (!authRegex || !authRegex.length) {
+    throw new RouteError(HttpStatusCodes.UNAUTHORIZED, errors.unauth);
+  }
+  const authorizationType = authRegex[1].trim().toLowerCase();
+  const authorizationCode = authRegex[2].trim();
+
+  return {authorizationCode, authorizationType};
 }

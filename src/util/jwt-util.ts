@@ -1,19 +1,19 @@
-import jsonwebtoken from 'jsonwebtoken';
-import EnvVars from '../declarations/major/EnvVars';
-
+import jsonwebtoken from "jsonwebtoken";
+import EnvVars from "../declarations/major/EnvVars";
+import { RouteError } from "@src/declarations/classes";
+import HttpStatusCodes from "@src/declarations/major/HttpStatusCodes";
 
 // **** Variables **** //
 
 // Errors
 const errors = {
-  validation: 'JSON-web-token validation failed.',
+  validation: "JSON-web-token validation failed.",
 } as const;
 
 // Options
 const options = {
   expiresIn: EnvVars.jwt.exp,
 };
-
 
 // **** Functions **** //
 
@@ -23,7 +23,7 @@ const options = {
 function sign(data: string | object | Buffer): Promise<string> {
   return new Promise((res, rej) => {
     jsonwebtoken.sign(data, EnvVars.jwt.secret, options, (err, token) => {
-      return err ? rej(err) : res(token || '');
+      return err ? rej(err) : res(token || "");
     });
   });
 }
@@ -32,13 +32,15 @@ function sign(data: string | object | Buffer): Promise<string> {
  * Decrypt JWT and extract client data.
  */
 async function decode<T>(jwt: string): Promise<string | undefined | T> {
-  return new Promise((res, rej) => {
+  return new Promise((res) => {
     jsonwebtoken.verify(jwt, EnvVars.jwt.secret, (err, decoded) => {
-      return err ? rej(errors.validation) : res(decoded as T);
+      if (err) {
+        throw new RouteError(HttpStatusCodes.UNAUTHORIZED, errors.validation);
+      }
+      return res(decoded as T);
     });
   });
 }
-
 
 // **** Export default **** //
 

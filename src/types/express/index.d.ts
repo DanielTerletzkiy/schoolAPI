@@ -1,4 +1,5 @@
 import 'express';
+import {SessionUser} from "@src/routes/shared/adminMw";
 
 
 // **** Declaration Merging **** //

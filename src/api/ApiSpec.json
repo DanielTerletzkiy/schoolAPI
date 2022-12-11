@@ -104,7 +104,7 @@
         }
       }
     },
-    "/user/all": {
+    "/user": {
       "get": {
         "tags": [
           "User"
@@ -123,6 +123,84 @@
                 }
               }
             }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "description": "adds user",
+        "responses": {
+          "200": {
+            "description": "added user"
+          }
+        }
+      }
+    },
+    "/user/:id": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "description": "gets one user",
+        "responses": {
+          "200": {
+            "description": "requested user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "User"
+        ],
+        "description": "updates one user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "updated user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "User"
+        ],
+        "description": "deletes one user",
+        "responses": {
+          "200": {
+            "description": "success"
           }
         }
       }

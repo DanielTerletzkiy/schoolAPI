@@ -16,17 +16,37 @@ export interface IReqQuery<T extends Query, U = void> extends e.Request {
 
 export interface IRes extends e.Response {
   locals: {
-    sessionUser: SessionUser;
+    currentUser: SessionUser;
   };
 }
 
 export enum UserRole {
-  Admin = 0,
-  Teacher = 1,
-  Student = 2,
+  Admin = 1,
+  Teacher = 2,
+  Student = 3,
 }
 
+export enum HTTP {
+  GET = "get",
+  POST = "post",
+  PUT = "put",
+  DELETE = "delete",
+  PATCH = "patch",
+  OPTIONS = "options",
+  HEAD = "head",
+}
+
+export type RoutePath = {
+  path: string;
+  method: HTTP;
+  permissions: Array<UserRole>;
+  function: (req: IReq<never>, res: IRes) => Promise<IRes>;
+};
+
+export type ModuleRoutePath = { [key: string]: RoutePath };
+
 export type AccessToken = {
+  id: number;
   sub: string;
   name: string;
   email: string;

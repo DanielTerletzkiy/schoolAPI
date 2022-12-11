@@ -25,7 +25,7 @@ export interface SessionUser extends JwtPayload {
   id: number;
   email: string;
   name: string;
-  role: User['roleId'];
+  roleId: UserRole;
 }
 
 
