@@ -1,7 +1,34 @@
-import { User } from ".prisma/client";
+import { User, Prisma } from ".prisma/client";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
+
+const includeObject: Prisma.UserInclude = {
+  student: {
+    include: {
+      classroom: true,
+    },
+  },
+  teacher: {
+    include: {
+      classroomTeacher: {
+        include: {
+          classroom: true,
+          subjects: {
+            include: {
+              subject: true,
+            },
+          },
+        },
+      },
+      subjects: {
+        include: {
+          subject: true,
+        },
+      },
+    },
+  },
+};
 
 /**
  * Get one user by email
@@ -10,6 +37,9 @@ export async function getOneByEmail(email: string): Promise<User | null> {
   return await prisma.user.findUnique({
     where: {
       email,
+    },
+    include: {
+      ...includeObject,
     },
   });
 }
@@ -21,6 +51,9 @@ export async function getOneById(id: number): Promise<User | null> {
   return await prisma.user.findUnique({
     where: {
       id,
+    },
+    include: {
+      ...includeObject,
     },
   });
 }
@@ -40,7 +73,11 @@ export async function persists(id: number): Promise<boolean> {
  * Get all users.
  */
 export async function getAll(): Promise<User[]> {
-  return await prisma.user.findMany();
+  return await prisma.user.findMany({
+    include: {
+      ...includeObject,
+    },
+  });
 }
 
 /**
