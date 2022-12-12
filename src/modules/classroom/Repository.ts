@@ -9,6 +9,20 @@ const includeObject: Prisma.ClassroomInclude = {
       user: true,
     },
   },
+  teachers: {
+    include: {
+      subjects: {
+        include: {
+          subject: true,
+        }
+      },
+      teacher: {
+        include: {
+          user: true
+        }
+      }
+    }
+  }
 };
 
 /**
