@@ -1,29 +1,57 @@
 import { Classroom, Prisma } from ".prisma/client";
 import { PrismaClient } from "@prisma/client";
+import { UserInclude } from "@src/routes/shared/PrismaInclude";
 
 const prisma = new PrismaClient();
 
-const includeObject: Prisma.ClassroomInclude = {
-  students: {
-    include: {
-      user: true,
-    },
-  },
-  teachers: {
-    include: {
-      subjects: {
-        include: {
-          subject: true,
-        }
+type ClassroomInclude = Prisma.ClassroomInclude;
+type TimetableInclude = Prisma.TimetableInclude;
+
+function includeObject(): ClassroomInclude {
+  return {
+    students: {
+      include: {
+        user: { select: UserInclude() },
       },
-      teacher: {
-        include: {
-          user: true
-        }
-      }
-    }
-  }
-};
+    },
+    teachers: {
+      include: {
+        subjects: {
+          include: {
+            subject: true,
+          },
+        },
+        teacher: {
+          include: {
+            user: { select: UserInclude() },
+          },
+        },
+      },
+    },
+  };
+}
+
+function getTimetableInclude(): TimetableInclude {
+  return {
+    schedules: {
+      include: {
+        subject: {
+          include: {
+            teachers: {
+              include: {
+                teacher: {
+                  include: {
+                    user: { select: UserInclude() },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+}
 
 /**
  * Get one classroom by id
@@ -34,7 +62,12 @@ export async function getOneById(id: number): Promise<Classroom | null> {
       id,
     },
     include: {
-      ...includeObject,
+      ...includeObject(),
+      timetables: {
+        include: {
+          ...getTimetableInclude(),
+        },
+      },
     },
   });
 }
@@ -54,7 +87,7 @@ export async function getOneByUserId(
       },
     },
     include: {
-      ...includeObject,
+      ...includeObject(),
     },
   });
 }
@@ -76,7 +109,7 @@ export async function persists(id: number): Promise<boolean> {
 export async function getAll(): Promise<Classroom[]> {
   return await prisma.classroom.findMany({
     include: {
-      ...includeObject,
+      ...includeObject(),
     },
   });
 }

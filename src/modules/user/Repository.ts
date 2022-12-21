@@ -1,34 +1,39 @@
 import { User, Prisma } from ".prisma/client";
 import { PrismaClient } from "@prisma/client";
+import { UserInclude } from "@src/routes/shared/PrismaInclude";
 
 const prisma = new PrismaClient();
 
-const includeObject: Prisma.UserInclude = {
-  student: {
-    include: {
-      classroom: true,
+type UserSelect = Prisma.UserSelect;
+
+function includeObject(): UserSelect {
+  return {
+    student: {
+      include: {
+        classroom: true,
+      },
     },
-  },
-  teacher: {
-    include: {
-      classroomTeacher: {
-        include: {
-          classroom: true,
-          subjects: {
-            include: {
-              subject: true,
+    teacher: {
+      include: {
+        classroomTeacher: {
+          include: {
+            classroom: true,
+            subjects: {
+              include: {
+                subject: true,
+              },
             },
           },
         },
-      },
-      subjects: {
-        include: {
-          subject: true,
+        subjects: {
+          include: {
+            subject: true,
+          },
         },
       },
     },
-  },
-};
+  };
+}
 
 /**
  * Get one user by email
@@ -39,7 +44,7 @@ export async function getOneByEmail(email: string): Promise<User | null> {
       email,
     },
     include: {
-      ...includeObject,
+      ...includeObject(),
     },
   });
 }
@@ -48,12 +53,15 @@ export async function getOneByEmail(email: string): Promise<User | null> {
  * Get one user by id
  */
 export async function getOneById(id: number): Promise<User | null> {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   return await prisma.user.findUnique({
     where: {
       id,
     },
-    include: {
-      ...includeObject,
+    select: {
+      ...includeObject(),
+      ...UserInclude(),
     },
   });
 }
@@ -73,9 +81,12 @@ export async function persists(id: number): Promise<boolean> {
  * Get all users.
  */
 export async function getAll(): Promise<User[]> {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   return await prisma.user.findMany({
-    include: {
-      ...includeObject,
+    select: {
+      ...includeObject(),
+      ...UserInclude(),
     },
   });
 }

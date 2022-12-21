@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -38,11 +35,12 @@ model ApiKey {
 }
 
 model Student {
-  id          Int        @id @default(autoincrement())
-  user        User       @relation(fields: [userId], references: [id])
-  userId      Int        @unique
-  classroom   Classroom? @relation(fields: [classroomId], references: [id])
+  id          Int          @id @default(autoincrement())
+  user        User         @relation(fields: [userId], references: [id])
+  userId      Int          @unique
+  classroom   Classroom?   @relation(fields: [classroomId], references: [id])
   classroomId Int?
+  attendance  Attendance[]
 }
 
 model Teacher {
@@ -51,6 +49,7 @@ model Teacher {
   userId           Int                  @unique
   subjects         SubjectsOnTeachers[]
   classroomTeacher ClassroomTeacher[]
+  attendance       Attendance[]
 }
 
 model Subject {
@@ -59,6 +58,7 @@ model Subject {
   color             String
   teachers          SubjectsOnTeachers[]
   classroomTeachers SubjectsOnClassroomTeachers[]
+  schedule          Schedule[]
 }
 
 model SubjectsOnTeachers {
@@ -79,6 +79,15 @@ model SubjectsOnClassroomTeachers {
   @@id([teacherId, subjectId])
 }
 
+model SchedulesOnClassroomTeachers {
+  teacher    ClassroomTeacher @relation(fields: [teacherId], references: [id])
+  teacherId  Int
+  schedule   Schedule         @relation(fields: [scheduleId], references: [id])
+  scheduleId Int
+
+  @@id([teacherId, scheduleId])
+}
+
 model ClassroomTeacher {
   id          Int                           @id @default(autoincrement())
   teacher     Teacher                       @relation(fields: [teacherId], references: [id])
@@ -86,13 +95,63 @@ model ClassroomTeacher {
   classroom   Classroom                     @relation(fields: [classroomId], references: [id])
   classroomId Int
   subjects    SubjectsOnClassroomTeachers[]
+  schedules   SchedulesOnClassroomTeachers[]
+  mainTeacher Classroom[]                   @relation("MainTeacher")
+}
+
+model Attendance {
+  id          Int       @id @default(autoincrement())
+  created     DateTime  @default(now())
+  student     Student   @relation(fields: [studentId], references: [id])
+  studentId   Int
+  teacher     Teacher   @relation(fields: [teacherId], references: [id])
+  teacherId   Int
+  classroom   Classroom @relation(fields: [classroomId], references: [id])
+  classroomId Int
+  schedule    Schedule  @relation(fields: [scheduleId], references: [id])
+  scheduleId  Int
+  present     Boolean   @default(false)
+  excuse      Excuse?
+}
+
+model Excuse {
+  id           Int        @id @default(autoincrement())
+  attendance   Attendance @relation(fields: [attendanceId], references: [id])
+  attendanceId Int        @unique
+  reason       String
+  document     String
+}
+
+model Timetable {
+  id          Int        @id @default(autoincrement())
+  classroom   Classroom  @relation(fields: [classroomId], references: [id])
+  classroomId Int
+  week        Int        @default(0)
+  schedules   Schedule[]
+}
+
+model Schedule {
+  id          Int                           @id @default(autoincrement())
+  subject     Subject                       @relation(fields: [subjectId], references: [id])
+  subjectId   Int
+  timetable   Timetable                     @relation(fields: [timetableId], references: [id])
+  timetableId Int
+  timeFrom    Int
+  timeTo      Int
+  day         Int
+  attendance  Attendance[]
+  teachers    SchedulesOnClassroomTeachers[]
 }
 
 model Classroom {
-  id       Int                @id @default(autoincrement())
-  prefix   String
-  grade    Int
-  suffix   String
-  students Student[]
-  teachers ClassroomTeacher[]
+  id            Int                @id @default(autoincrement())
+  prefix        String
+  grade         Int
+  suffix        String
+  students      Student[]
+  teachers      ClassroomTeacher[]
+  attendance    Attendance[]
+  timetables    Timetable[]
+  mainTeacher   ClassroomTeacher   @relation("MainTeacher", fields: [mainTeacherId], references: [id])
+  mainTeacherId Int
 }
