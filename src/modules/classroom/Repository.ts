@@ -28,6 +28,15 @@ function includeObject(): ClassroomInclude {
         },
       },
     },
+    mainTeacher: {
+      include: {
+        teacher: {
+          include: {
+            user: { select: UserInclude() },
+          },
+        },
+      },
+    },
   };
 }
 
