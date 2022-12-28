@@ -10,8 +10,8 @@ export type AttendanceRange = {
 };
 
 export enum AttendanceGetter {
-  User,
-  Schedule,
+  User= 'user',
+  Schedule = 'schedule',
 }
 
 type AttendanceWhereInput = Prisma.AttendanceWhereInput;
@@ -55,7 +55,7 @@ function includeObject(): AttendanceInclude {
  * Get one Attendance by id
  */
 export async function getOneById(id: number): Promise<Attendance | null> {
-  return await prisma.attendance.findUnique({
+  return prisma.attendance.findFirstOrThrow({
     where: {
       id,
     },
@@ -89,7 +89,7 @@ export async function getAll(
       break;
     }
   }
-  return await prisma.attendance.findMany({
+  return prisma.attendance.findMany({
     where,
     include: {
       ...includeObject(),
@@ -101,7 +101,7 @@ export async function getAll(
  * See if an Attendance with the given id exists.
  */
 export async function persists(id: number): Promise<boolean> {
-  return !!(await prisma.attendance.findUnique({
+  return !!(await prisma.attendance.findFirstOrThrow({
     where: {
       id,
     },
@@ -112,7 +112,7 @@ export async function persists(id: number): Promise<boolean> {
  * Add one Attendance.
  */
 export async function add(attendance: AttendanceCreateInput): Promise<Attendance> {
-  return await prisma.attendance.create({
+  return prisma.attendance.create({
     data: attendance,
   });
 }
@@ -124,7 +124,7 @@ export async function updateOne(
   id: number,
   attendance: Attendance
 ): Promise<Attendance> {
-  return await prisma.attendance.update({
+  return prisma.attendance.update({
     where: {
       id: id,
     },
@@ -136,7 +136,7 @@ export async function updateOne(
  * Delete one Attendance.
  */
 export async function deleteOne(id: number): Promise<Attendance> {
-  return await prisma.attendance.delete({
+  return prisma.attendance.delete({
     where: {
       id,
     },

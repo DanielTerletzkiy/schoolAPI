@@ -16,20 +16,24 @@ import {
   basePath as AttendanceBasePath,
 } from "@src/modules/classroom/modules/attendance";
 
+import {
+  Paths as TimetablePaths,
+  basePath as TimetableBaePath,
+} from "@src/modules/classroom/modules/timetable";
+
 import { ModuleRoutePath } from "@src/routes/shared/types";
 import PermissionCheck from "@src/routes/middleware/PermissionCheck";
-import moment from "moment";
 
 // **** Init **** //
 
-const apiRouter = Router(),
+const apiRouter = Router({mergeParams: true}),
   validate = jetValidator();
 
 apiRouter.use(AuthCookieCheck);
 
 // **** Setup auth routes **** //
 
-const authRouter = Router();
+const authRouter = Router({mergeParams: true});
 
 // Login user
 authRouter.post(
@@ -48,6 +52,7 @@ apiRouter.use(authRoutes.paths.basePath, authRouter);
 
 routeBuilder(UserBasePath, UserPaths);
 routeBuilder(AttendanceBasePath, AttendancePaths);
+routeBuilder(TimetableBaePath, TimetablePaths);
 routeBuilder(ClassroomBasePath, ClassroomPaths);
 
 
@@ -56,7 +61,7 @@ function routeBuilder(
   paths: ModuleRoutePath,
   checkAuth = true
 ) {
-  const router = Router();
+  const router = Router({mergeParams: true});
   if (checkAuth) {
     router.use(AuthCheck);
   }

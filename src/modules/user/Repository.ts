@@ -39,7 +39,7 @@ function includeObject(): UserSelect {
  * Get one user by email
  */
 export async function getOneByEmail(email: string): Promise<User | null> {
-  return await prisma.user.findUnique({
+  return prisma.user.findFirstOrThrow({
     where: {
       email,
     },
@@ -55,7 +55,7 @@ export async function getOneByEmail(email: string): Promise<User | null> {
 export async function getOneById(id: number): Promise<User | null> {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  return await prisma.user.findUnique({
+  return await prisma.user.findFirstOrThrow({
     where: {
       id,
     },
@@ -70,7 +70,7 @@ export async function getOneById(id: number): Promise<User | null> {
  * See if a user with the given id exists.
  */
 export async function persists(id: number): Promise<boolean> {
-  return !!(await prisma.user.findUnique({
+  return !!(await prisma.user.findFirstOrThrow({
     where: {
       id,
     },

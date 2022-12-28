@@ -10,13 +10,18 @@ import { AttendanceGetter } from "@src/modules/classroom/modules/attendance/Repo
  * Get all attendances.
  */
 export async function getAll(req: IReq, res: IRes) {
-  const { range, index, getter, getterId } = req.params as unknown as {
+  const { range, index, getter, getterId } = req.params as {
     range: StartOf;
     index: string;
     getter: AttendanceGetter;
     getterId: string;
   };
-  const attendances = await service.getAll(range,index,getter,parseInt(getterId));
+  const attendances = await service.getAll(
+    range,
+    index,
+    getter,
+    parseInt(getterId)
+  );
   return res.status(HttpStatusCodes.OK).json(attendances);
 }
 

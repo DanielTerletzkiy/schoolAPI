@@ -66,7 +66,7 @@ function getTimetableInclude(): TimetableInclude {
  * Get one classroom by id
  */
 export async function getOneById(id: number): Promise<Classroom | null> {
-  return await prisma.classroom.findUnique({
+  return await prisma.classroom.findFirstOrThrow({
     where: {
       id,
     },
@@ -105,7 +105,7 @@ export async function getOneByUserId(
  * See if a classroom with the given id exists.
  */
 export async function persists(id: number): Promise<boolean> {
-  return !!(await prisma.classroom.findUnique({
+  return !!(await prisma.classroom.findFirstOrThrow({
     where: {
       id,
     },

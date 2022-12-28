@@ -127,6 +127,7 @@ model Timetable {
   classroom   Classroom  @relation(fields: [classroomId], references: [id])
   classroomId Int
   week        Int        @default(0)
+  year        Int        @default(0)
   schedules   Schedule[]
 }
 
