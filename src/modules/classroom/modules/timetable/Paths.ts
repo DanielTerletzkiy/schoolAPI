@@ -12,7 +12,7 @@ export default {
   },
   getCurrent: {
     method: HTTP.GET,
-    path: "/",
+    path: "/@current",
     permissions: [UserRole.Admin, UserRole.Teacher, UserRole.Student],
     function: controller.getCurrent,
   },

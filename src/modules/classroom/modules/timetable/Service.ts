@@ -3,9 +3,8 @@ import HttpStatusCodes from "@src/declarations/major/HttpStatusCodes";
 import { Timetable, Prisma, Schedule } from ".prisma/client";
 import * as repository from "./Repository";
 import ScheduleCreateInput = Prisma.ScheduleCreateInput;
-import ScheduleCreateArgs = Prisma.ScheduleCreateArgs;
-import ScheduleCreateOrConnectWithoutTeachersInput = Prisma.ScheduleCreateOrConnectWithoutTeachersInput;
 import SchedulesOnClassroomTeachersCreateWithoutScheduleInput = Prisma.SchedulesOnClassroomTeachersCreateWithoutScheduleInput;
+import { Day } from "@src/routes/shared/types";
 
 // **** Variables **** //
 
@@ -39,7 +38,20 @@ export async function getCurrent(
   classroomId: Timetable["classroomId"]
 ): Promise<Timetable | null> {
   const currentTimetableId = await repository.current(classroomId);
-  return repository.getOneById(currentTimetableId);
+  const timetable = (await repository.getOneById(
+    currentTimetableId
+  )) as Timetable & {
+    schedules: Schedule[];
+    daySchedules: Schedule[][];
+  };
+  timetable.daySchedules = Object.values(Day)
+    .filter((day) => typeof day === "string")
+    .map((day) => {
+      return timetable.schedules?.filter(
+        (schedule) => schedule.day === Day[day as keyof typeof Day]
+      );
+    });
+  return timetable;
 }
 
 /**

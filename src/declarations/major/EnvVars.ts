@@ -4,11 +4,11 @@ export default {
   nodeEnv: (process.env.NODE_ENV ?? ''),
   port: (process.env.PORT ?? 0),
   cookieProps: {
-    key: 'schoolAPI',
+    key: 'jwt',
     secret: (process.env.COOKIE_SECRET ?? ''),
     options: {
       httpOnly: true,
-      signed: true,
+      signed: false,     //!!!TODO this is VERY insecure!!!!
       path: (process.env.COOKIE_PATH ?? ''),
       maxAge: Number(process.env.COOKIE_EXP ?? 0),
       domain: (process.env.COOKIE_DOMAIN ?? ''),

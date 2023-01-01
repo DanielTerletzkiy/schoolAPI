@@ -12,7 +12,6 @@ import EnvVars from '@src/declarations/major/EnvVars';
 import HttpStatusCodes from '@src/declarations/major/HttpStatusCodes';
 import { NodeEnvs } from '@src/declarations/enums';
 import { RouteError } from '@src/declarations/classes';
-// @ts-ignore
 import cors from "cors";
 
 // **** Init express **** //
@@ -25,7 +24,10 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(cookieParser(EnvVars.cookieProps.secret));
-app.use(cors());
+app.use(cors({
+  origin: true,                                  //!!!TODO this is VERY insecure!!!!
+  credentials: true,
+}));
 
 // Show routes called in console during development
 if (EnvVars.nodeEnv === NodeEnvs.Dev) {

@@ -16,6 +16,12 @@ export default {
     permissions: [UserRole.Admin, UserRole.Teacher, UserRole.Student],
     function: controller.getAll,
   },
+  getCurrent: {
+    method: HTTP.GET,
+    path: "/@current",
+    permissions: [UserRole.Admin, UserRole.Teacher, UserRole.Student],
+    function: controller.getCurrent,
+  },
   getOne: {
     method: HTTP.GET,
     path: "/:id",

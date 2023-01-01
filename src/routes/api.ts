@@ -26,14 +26,14 @@ import PermissionCheck from "@src/routes/middleware/PermissionCheck";
 
 // **** Init **** //
 
-const apiRouter = Router({mergeParams: true}),
+const apiRouter = Router({ mergeParams: true }),
   validate = jetValidator();
 
 apiRouter.use(AuthCookieCheck);
 
 // **** Setup auth routes **** //
 
-const authRouter = Router({mergeParams: true});
+const authRouter = Router({ mergeParams: true });
 
 // Login user
 authRouter.post(
@@ -55,13 +55,12 @@ routeBuilder(AttendanceBasePath, AttendancePaths);
 routeBuilder(TimetableBaePath, TimetablePaths);
 routeBuilder(ClassroomBasePath, ClassroomPaths);
 
-
 function routeBuilder(
   basePath: string,
   paths: ModuleRoutePath,
   checkAuth = true
 ) {
-  const router = Router({mergeParams: true});
+  const router = Router({ mergeParams: true });
   if (checkAuth) {
     router.use(AuthCheck);
   }

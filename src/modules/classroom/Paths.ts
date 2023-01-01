@@ -1,8 +1,4 @@
-import {
-  HTTP,
-  ModuleRoutePath,
-  UserRole,
-} from "@src/routes/shared/types";
+import { HTTP, ModuleRoutePath, UserRole } from "@src/routes/shared/types";
 import * as controller from "./Controller";
 
 export const basePath = "/classroom";
@@ -18,6 +14,12 @@ export default {
     path: "/",
     permissions: [UserRole.Admin, UserRole.Teacher],
     function: controller.getAll,
+  },
+  getCurrent: {
+    method: HTTP.GET,
+    path: "/@current",
+    permissions: [UserRole.Student],
+    function: controller.getOne,
   },
   getOne: {
     method: HTTP.GET,

@@ -1,14 +1,15 @@
 import HttpStatusCodes from "@src/declarations/major/HttpStatusCodes";
 import { IReq, IRes } from "@src/routes/shared/types";
-import {Schedule, Timetable} from ".prisma/client";
+import { Schedule, Timetable } from ".prisma/client";
 import * as service from "./Service";
+import { current } from "@src/modules/classroom/Repository";
 
 /**
  * Get all timetables.
  */
 export async function getAll(req: IReq, res: IRes) {
-  const { classroomId } = req.params as { classroomId: string };
-  const timetables = await service.getAll(parseInt(classroomId));
+  const classroomId = await currentClassroomId(req, res);
+  const timetables = await service.getAll(classroomId);
   return res.status(HttpStatusCodes.OK).json(timetables);
 }
 
@@ -25,8 +26,8 @@ export async function getOne(req: IReq, res: IRes) {
  * Get current timetable.
  */
 export async function getCurrent(req: IReq, res: IRes) {
-  const { classroomId } = req.params as { classroomId: string };
-  const timetable = await service.getCurrent(parseInt(classroomId));
+  const classroomId = await currentClassroomId(req, res);
+  const timetable = await service.getCurrent(classroomId);
   return res.status(HttpStatusCodes.OK).json(timetable);
 }
 
@@ -35,8 +36,8 @@ export async function getCurrent(req: IReq, res: IRes) {
  */
 export async function add(req: IReq<Timetable>, res: IRes) {
   const timetable = req.body;
-  const { classroomId } = req.params as { classroomId: string };
-  await service.addOne(parseInt(classroomId), timetable);
+  const classroomId = await currentClassroomId(req, res);
+  await service.addOne(classroomId, timetable);
   return res.status(HttpStatusCodes.CREATED).end();
 }
 
@@ -95,4 +96,13 @@ export async function deleteOneSchedule(req: IReq, res: IRes) {
   const id = parseInt(req.params.id);
   await service.deleteOneSchedule(id);
   return res.status(HttpStatusCodes.OK).end();
+}
+
+async function currentClassroomId(req: IReq<unknown>, res: IRes): Promise<number> {
+  const { classroomId } = req.params as { classroomId: string };
+  if (classroomId === "@current") {
+    const currentUser = res.locals.currentUser;
+    return current(currentUser.id);
+  }
+  return parseInt(classroomId);
 }

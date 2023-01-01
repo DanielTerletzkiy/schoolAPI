@@ -1,6 +1,6 @@
 import HttpStatusCodes from "@src/declarations/major/HttpStatusCodes";
-import {IReq, IRes, UserRole} from "@src/routes/shared/types";
-import {User} from ".prisma/client";
+import { IReq, IRes, UserRole } from "@src/routes/shared/types";
+import { User } from ".prisma/client";
 import * as userService from "./Service";
 
 /**
@@ -14,6 +14,12 @@ export async function getAll(_: IReq, res: IRes) {
 export async function getOne(req: IReq, res: IRes) {
   const id = parseInt(req.params.id);
   const users = await userService.get(id);
+  return res.status(HttpStatusCodes.OK).json(users);
+}
+
+export async function getCurrent(req: IReq, res: IRes) {
+  const currentUser = res.locals.currentUser;
+  const users = await userService.get(currentUser.id);
   return res.status(HttpStatusCodes.OK).json(users);
 }
 

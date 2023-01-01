@@ -5,6 +5,7 @@ import HttpStatusCodes from "@src/declarations/major/HttpStatusCodes";
 import { RouteError } from "@src/declarations/classes";
 import { tick } from "@src/declarations/functions";
 import { AccessToken } from "@src/routes/shared/types";
+import EnvVars from "@src/declarations/major/EnvVars";
 
 // **** Variables **** //
 
@@ -56,4 +57,14 @@ export function getSplitAuthorizationHeader(authorization: string){
   const authorizationCode = authRegex[2].trim();
 
   return {authorizationCode, authorizationType};
+}
+
+export function checkCookieToken(cookie: string){
+  const { key } = EnvVars.cookieProps;
+  return cookie.includes(key);
+}
+
+export function cookieToToken(cookie: string){
+  const { key } = EnvVars.cookieProps;
+  return cookie.replace(`${key}=`,'').trim();
 }

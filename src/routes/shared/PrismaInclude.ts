@@ -1,4 +1,4 @@
-import {Prisma} from ".prisma/client";
+import { Prisma } from ".prisma/client";
 
 type UserSelect = Prisma.UserSelect;
 
@@ -12,6 +12,7 @@ export function UserInclude(): UserSelect {
     roleId: true,
     role: true,
     student: true,
+    avatar: true,
     teacher: {
       include: {
         classroomTeacher: {
@@ -30,7 +31,6 @@ export function UserInclude(): UserSelect {
           },
         },
       },
-
     },
   };
 }

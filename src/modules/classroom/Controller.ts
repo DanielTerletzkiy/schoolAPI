@@ -14,7 +14,7 @@ export async function getAll(_: IReq, res: IRes) {
 export async function getOne(req: IReq, res: IRes) {
   const id = parseInt(req.params.id);
   const currentUser = res.locals.currentUser;
-  const classrooms = await classroomService.get(id, currentUser);
+  const classrooms = await classroomService.get(currentUser, id);
   return res.status(HttpStatusCodes.OK).json(classrooms);
 }
 

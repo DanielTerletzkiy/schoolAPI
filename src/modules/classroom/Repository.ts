@@ -1,6 +1,7 @@
 import { Classroom, Prisma } from ".prisma/client";
 import { PrismaClient } from "@prisma/client";
 import { UserInclude } from "@src/routes/shared/PrismaInclude";
+import moment from "moment/moment";
 
 const prisma = new PrismaClient();
 
@@ -66,7 +67,7 @@ function getTimetableInclude(): TimetableInclude {
  * Get one classroom by id
  */
 export async function getOneById(id: number): Promise<Classroom | null> {
-  return await prisma.classroom.findFirstOrThrow({
+  return prisma.classroom.findFirstOrThrow({
     where: {
       id,
     },
@@ -87,7 +88,7 @@ export async function getOneById(id: number): Promise<Classroom | null> {
 export async function getOneByUserId(
   userId: number
 ): Promise<Classroom | null> {
-  return await prisma.classroom.findFirst({
+  return prisma.classroom.findFirst({
     where: {
       students: {
         every: {
@@ -113,10 +114,29 @@ export async function persists(id: number): Promise<boolean> {
 }
 
 /**
+ * Get currently used classroom id.
+ */
+export async function current(userId: number): Promise<Classroom["id"]> {
+  const { id } = await prisma.classroom.findFirstOrThrow({
+    where: {
+      students: {
+        every: {
+          userId,
+        },
+      },
+    },
+    select: {
+      id: true,
+    },
+  });
+  return id;
+}
+
+/**
  * Get all classrooms.
  */
 export async function getAll(): Promise<Classroom[]> {
-  return await prisma.classroom.findMany({
+  return prisma.classroom.findMany({
     include: {
       ...includeObject(),
     },
@@ -127,7 +147,7 @@ export async function getAll(): Promise<Classroom[]> {
  * Add one classroom.
  */
 export async function add(classroom: Classroom): Promise<Classroom> {
-  return await prisma.classroom.create({
+  return prisma.classroom.create({
     data: classroom,
   });
 }
@@ -139,7 +159,7 @@ export async function updateOne(
   id: number,
   classroom: Classroom
 ): Promise<Classroom> {
-  return await prisma.classroom.update({
+  return prisma.classroom.update({
     where: {
       id: id,
     },
@@ -151,7 +171,7 @@ export async function updateOne(
  * Delete one classroom.
  */
 export async function deleteOne(id: number): Promise<Classroom> {
-  return await prisma.classroom.delete({
+  return prisma.classroom.delete({
     where: {
       id,
     },
@@ -165,7 +185,7 @@ export async function assignStudent(
   id: number,
   userId: number
 ): Promise<Classroom> {
-  return await prisma.classroom.update({
+  return prisma.classroom.update({
     where: {
       id: id,
     },
@@ -186,7 +206,7 @@ export async function removeStudent(
   id: number,
   userId: number
 ): Promise<Classroom> {
-  return await prisma.classroom.update({
+  return prisma.classroom.update({
     where: {
       id: id,
     },

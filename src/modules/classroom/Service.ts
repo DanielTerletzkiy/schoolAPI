@@ -3,7 +3,7 @@ import HttpStatusCodes from "@src/declarations/major/HttpStatusCodes";
 import { UserRole } from "@src/routes/shared/types";
 import { Classroom } from ".prisma/client";
 import * as repository from "./Repository";
-import {SessionUser} from "@src/routes/shared/adminMw";
+import { SessionUser } from "@src/routes/shared/adminMw";
 
 // **** Variables **** //
 
@@ -22,8 +22,8 @@ export function getAll(): Promise<Classroom[]> {
  * Get one classroom by id
  */
 export function get(
-  id: number,
-  currentUser: SessionUser
+  currentUser: SessionUser,
+  id = 0
 ): Promise<Classroom | null> {
   switch (currentUser.roleId) {
     case UserRole.Student: {

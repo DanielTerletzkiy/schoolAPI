@@ -53,9 +53,8 @@ export async function getOneByEmail(email: string): Promise<User | null> {
  * Get one user by id
  */
 export async function getOneById(id: number): Promise<User | null> {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  return await prisma.user.findFirstOrThrow({
+  return prisma.user.findFirstOrThrow({
     where: {
       id,
     },

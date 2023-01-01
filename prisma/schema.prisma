@@ -13,6 +13,7 @@ model User {
   hash    String
   name    String
   surname String
+  avatar  String
   roleId  Int
   role    Role     @relation(fields: [roleId], references: [id])
   student Student?
@@ -23,6 +24,7 @@ model Role {
   id          Int      @id @default(autoincrement())
   name        String
   description String
+  color       String
   user        User[]
   apiKeys     ApiKey[]
 }
@@ -89,14 +91,14 @@ model SchedulesOnClassroomTeachers {
 }
 
 model ClassroomTeacher {
-  id          Int                           @id @default(autoincrement())
-  teacher     Teacher                       @relation(fields: [teacherId], references: [id])
+  id          Int                            @id @default(autoincrement())
+  teacher     Teacher                        @relation(fields: [teacherId], references: [id])
   teacherId   Int
-  classroom   Classroom                     @relation(fields: [classroomId], references: [id])
+  classroom   Classroom                      @relation(fields: [classroomId], references: [id])
   classroomId Int
   subjects    SubjectsOnClassroomTeachers[]
   schedules   SchedulesOnClassroomTeachers[]
-  mainTeacher Classroom[]                   @relation("MainTeacher")
+  mainTeacher Classroom[]                    @relation("MainTeacher")
 }
 
 model Attendance {
@@ -132,10 +134,10 @@ model Timetable {
 }
 
 model Schedule {
-  id          Int                           @id @default(autoincrement())
-  subject     Subject                       @relation(fields: [subjectId], references: [id])
+  id          Int                            @id @default(autoincrement())
+  subject     Subject                        @relation(fields: [subjectId], references: [id])
   subjectId   Int
-  timetable   Timetable                     @relation(fields: [timetableId], references: [id])
+  timetable   Timetable                      @relation(fields: [timetableId], references: [id])
   timetableId Int
   timeFrom    Int
   timeTo      Int
